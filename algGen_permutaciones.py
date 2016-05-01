@@ -7,27 +7,28 @@ import seleccion.seleccion as seleccion
 import practicas.cuadradoMagico.cuadradoMagico as cuadradoMagico
 import random  as ran
 import numpy as np
-
+import sys
 
 metodoAptitud = {
-	0 : cuadradoMagico.calcularAptitud, 
+	1 : cuadradoMagico.calcularAptitud, 
 }
 MAX = 1
 MIN = - 1
 metodoPoblacion = {
-	0 : cuadradoMagico.crearPoblacion, 
+	1 : cuadradoMagico.crearPoblacion, 
 }
 
 ###############CONFIGURACION INICIAL ##################
-NUMERO_PRACTICA = 0
-TIPO_PROBLEMA = MAX
-N = 3
+NUMERO_PRACTICA = 1
+TIPO_PROBLEMA = MIN
+N = int(sys.argv[1])
 
-TAMANIO_POBLACION =   10000
-NUMERO_GENERACIONES = 1000
-PORCENTAJE_CRUZA = 60
-PORCENTAJE_MUTACION = 93
-NUMERO_MEJORES_INDIVIDUOS = 8
+
+TAMANIO_POBLACION =   1000
+NUMERO_GENERACIONES = 200000
+PORCENTAJE_CRUZA = 85
+PORCENTAJE_MUTACION = 90	
+NUMERO_MEJORES_INDIVIDUOS = 4
 TAMANIO_GENOTIPO = N * N
 ######################################################
 
@@ -58,7 +59,7 @@ def elitismo(poblacion, mejoresIndividuos,aptitud,numeroMejoresIndividuos):
 		ordenados = ordenar(poblacion,aptitud)
 		for x in range(numeroMejoresIndividuos):
 			mejoresIndividuos.append(ordenados[x])
-		aptitud = metodoAptitud[NUMERO_PRACTICA](mejoresIndividuos,TIPO_PROBLEMA)
+		aptitud = metodoAptitud[NUMERO_PRACTICA](mejoresIndividuos,TIPO_PROBLEMA,N)
 		ordenados2 = ordenar(mejoresIndividuos,aptitud)
 		mejoresIndividuos = ordenados2[:numeroMejoresIndividuos]
 	return mejoresIndividuos
@@ -69,17 +70,24 @@ def algoritmoGeneticoSimple(tamanioPoblacion,numeroGeneraciones,porcentajeCruza,
 	porcentajeMutacion, numeroMejoresIndividuos, tamanioGenotipo,mejoresIndividuos):
 	generacionActual = 0
 	poblacion = metodoPoblacion[NUMERO_PRACTICA](tamanioPoblacion,tamanioGenotipo)
-	aptitud = metodoAptitud[NUMERO_PRACTICA](poblacion,TIPO_PROBLEMA)
+	aptitud = metodoAptitud[NUMERO_PRACTICA](poblacion,TIPO_PROBLEMA,N)
 	mejoresIndividuos = elitismo(poblacion,mejoresIndividuos,aptitud,numeroMejoresIndividuos)
-	listaPadres = seleccion.obtener_lista(poblacion,aptitud) 
+	listaPadres = seleccion.obtener_lista(poblacion,aptitud)
 	nuevaPoblacion = poblacion
 	while generacionActual < numeroGeneraciones:
 		nuevaPoblacion = cruza.cruzaPadres(nuevaPoblacion,listaPadres,porcentajeCruza)
-		nuevaPoblacion = mutacion.mutacion_uniforme(nuevaPoblacion, porcentajeMutacion)
-		aptitud = metodoAptitud[NUMERO_PRACTICA](nuevaPoblacion,TIPO_PROBLEMA)
+		#aptitud = metodoAptitud[NUMERO_PRACTICA](nuevaPoblacion,TIPO_PROBLEMA,N)
+		#mejoresIndividuos = elitismo(nuevaPoblacion,mejoresIndividuos,aptitud,numeroMejoresIndividuos)
+		nuevaPoblacion = mutacion.mutacion(nuevaPoblacion, porcentajeMutacion)
+		aptitud = metodoAptitud[NUMERO_PRACTICA](nuevaPoblacion,TIPO_PROBLEMA,N)
+		#print aptitud
 		mejoresIndividuos = elitismo(nuevaPoblacion,mejoresIndividuos,aptitud,numeroMejoresIndividuos)
+		print "\n mejores individuos, generación: ", generacionActual
+		for i,y in zip(mejoresIndividuos,metodoAptitud[NUMERO_PRACTICA](mejoresIndividuos,TIPO_PROBLEMA,N)) :
+			print i, y * TIPO_PROBLEMA
 		listaPadres = seleccion.obtener_lista(nuevaPoblacion,aptitud)
 		generacionActual += 1
+	
 #####################################################
 
 

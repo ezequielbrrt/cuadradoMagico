@@ -59,7 +59,9 @@ def estocastico_universal(poblacion,aptitud):
   
 def obtener_lista(poblacion,aptitud):
 	listaPadres = sobrante_Estocastico_SR(poblacion,aptitud)
-	#for i in range(len(poblacion)):
-	#	listaPadres.append(seleccion_ruleta(poblacion,aptitud))
+	"""listaPadres = []
+	for i in range(len(poblacion)):
+		listaPadres.append(seleccion_ruleta(poblacion,aptitud))
+	"""
 	return listaPadres
 
